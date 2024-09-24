@@ -1,0 +1,36 @@
+version: "1"
+
+package:
+  id: io.github.Mort
+  name: Mort
+  version: 0.0.0.2
+  kind: app
+  description: |
+    Platformer game made with Qt
+
+command:
+  - /opt/apps/io.github.Mort/files/bin/Mort
+
+base: org.deepin.foundation/23.0.0
+runtime: org.deepin.Runtime/23.0.1
+
+sources:
+  - kind: git
+    url: https://github.com/couatl/Mort.git
+    version: master
+    commit: 1652078ad39827228216f0c81d3e50587e35a257
+  - kind: file
+    url: http://security.debian.org/debian-security/pool/updates/main/q/qtbase-opensource-src/libqt5opengl5-dev_5.11.3+dfsg1-1+deb10u6_amd64.deb
+    digest: 7853befae994e41b023ebb1b86f1300d017ef8ef041a792f14a3ce99392a2c77
+  - kind: file
+    url: http://security.debian.org/debian-security/pool/updates/main/q/qtbase-opensource-src/libqt5opengl5_5.11.3+dfsg1-1+deb10u6_amd64.deb
+    digest: f0cdf8195a30c2c0b099a210a90a4bb17f783661656dddd4eab38155e185b5a4
+
+build: |
+  bash ./install_dep linglong/sources $PREFIX
+
+  cd /project/linglong/sources/Mort.git
+  git apply ../../../0001-install.patch
+  qmake -makefile PREFIX=${PREFIX} LIB_INSTALL_DIR=${PREFIX}/lib/${TRIPLET}
+  make -j$(nproc)
+  make install
